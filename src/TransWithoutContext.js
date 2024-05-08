@@ -1,8 +1,8 @@
 import { Fragment, isValidElement, cloneElement, createElement, Children } from 'react';
+import i18next from 'i18next';
 import HTML from 'html-parse-stringify';
-import { warn, warnOnce } from './utils.js';
+import { warn } from './utils.js';
 import { getDefaults } from './defaults.js';
-import { getI18n } from './i18nInstance.js';
 
 function hasChildren(node, checkLength) {
   if (!node) return false;
@@ -90,7 +90,7 @@ export function nodesToString(children, i18nOptions) {
       } else {
         // not a valid interpolation object (can only contain one value plus format)
         warn(
-          `react-i18next: the passed in object contained more than one variable - the object should look like {{ value, format }} where format is optional.`,
+          `fq-intl-react: the passed in object contained more than one variable - the object should look like {{ value, format }} where format is optional.`,
           child,
         );
       }
@@ -315,17 +315,11 @@ export function Trans({
   defaults,
   components,
   ns,
-  i18n: i18nFromProps,
   t: tFromProps,
   shouldUnescape,
   ...additionalProps
 }) {
-  const i18n = i18nFromProps || getI18n();
-
-  if (!i18n) {
-    warnOnce('You will need to pass in an i18next instance by using i18nextReactModule');
-    return children;
-  }
+  const i18n = i18next;
 
   const t = tFromProps || i18n.t.bind(i18n) || ((k) => k);
 
@@ -370,7 +364,6 @@ export function Trans({
       )
         return;
 
-      // eslint-disable-next-line react/no-unstable-nested-components, no-inner-declarations
       function Componentized() {
         // <>{comp}</>
         return createElement(Fragment, null, comp);
